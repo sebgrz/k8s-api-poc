@@ -23,20 +23,29 @@ func main() {
 			panic(err)
 		}
 	}
-	
+
 	client, err := kubernetes.NewForConfig(config)
 	if err != nil {
 		panic(err)
 	}
 
-	pods := client.CoreV1().Pods("default")
-	podList, err := pods.List(context.Background(), v1.ListOptions{})
+	namespaces := client.CoreV1().Namespaces()
+	namespaceList, err := namespaces.List(context.Background(), v1.ListOptions{})
 	if err != nil {
 		panic(err)
 	}
 
-	println("Pods:")
-	for _, i := range podList.Items {
-	fmt.Printf("Name: %s\n", i.Name)
+	for _, namespace := range namespaceList.Items {
+		pods := client.CoreV1().Pods(namespace.Name)
+		podList, err := pods.List(context.Background(), v1.ListOptions{})
+		if err != nil {
+			panic(err)
+		}
+
+		fmt.Printf("Pods of namespace %s:\n", namespace.Name)
+		for _, i := range podList.Items {
+			fmt.Printf("Name: %s Namespace: %s\n", i.Name, i.Namespace)
+		}
+		println()
 	}
 }
