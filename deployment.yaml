@@ -1,0 +1,20 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: poc
+  name: centos-deployment
+  labels:
+    app: centos
+spec:
+  selector:
+    matchLabels:
+      app: centos
+  template:
+    metadata:
+      labels:
+        app: centos
+    spec:
+      containers:
+      - name: centos
+        image: centos:latest 
+        command: [ "/bin/sh" , "-c", "tail -f /dev/null" ]
